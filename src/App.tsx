@@ -106,7 +106,7 @@ export default function App() {
 
   // Observer para destacar o link ativo no menu durante o scroll
   useEffect(() => {
-    const sections = ['sessao-1', 'sessao-2', 'sessao-3', 'sessao-4', 'sessao-5', 'sessao-6'];
+    const sections = ['capa', 'sessao-1', 'sessao-2', 'sessao-3', 'sessao-4', 'sessao-5', 'sessao-6'];
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 220;
       for (const id of sections) {
@@ -319,7 +319,7 @@ DIVIDE(
           
           {/* Marca / Logo Empresa Cimental Fermaflex + Power BI */}
           <button
-            onClick={() => scrollTo('sessao-1')}
+            onClick={() => scrollTo('capa')}
             className="flex items-center gap-2 sm:gap-3 focus:outline-none group text-left cursor-pointer"
           >
             {/* Logo Cimental FERMAFLEX */}
@@ -348,9 +348,10 @@ DIVIDE(
             </div>
           </button>
 
-          {/* 6 Itens de Navegação Rápida com Rolagem Suave */}
+          {/* 7 Itens de Navegação Rápida com Rolagem Suave */}
           <nav className="hidden xl:flex items-center gap-1">
             {[
+              { id: 'capa', label: 'Capa' },
               { id: 'sessao-1', label: '1. O que é' },
               { id: 'sessao-2', label: '2. De Planilha a KPI' },
               { id: 'sessao-3', label: '3. Extração SQL' },
@@ -416,12 +417,13 @@ DIVIDE(
 
         {/* Barra de Navegação Rápida para Celulares e Telas Menores */}
         <div className="xl:hidden flex items-center justify-around border-t border-slate-200 dark:border-[#242731] bg-slate-50 dark:bg-[#121318] py-2 px-1 text-[11px] overflow-x-auto gap-1">
-          <button onClick={() => scrollTo('sessao-1')} className="px-2 py-1 text-slate-700 dark:text-neutral-300 whitespace-nowrap">1. O que é</button>
-          <button onClick={() => scrollTo('sessao-2')} className="px-2 py-1 text-slate-700 dark:text-neutral-300 whitespace-nowrap">2. Planilha vs KPI</button>
-          <button onClick={() => scrollTo('sessao-3')} className="px-2 py-1 text-slate-700 dark:text-neutral-300 whitespace-nowrap">3. Banco SQL</button>
-          <button onClick={() => scrollTo('sessao-4')} className="px-2 py-1 text-slate-700 dark:text-neutral-300 whitespace-nowrap">4. Decisão</button>
-          <button onClick={() => scrollTo('sessao-5')} className="px-2 py-1 text-slate-700 dark:text-neutral-300 whitespace-nowrap">5. Q&A</button>
-          <button onClick={() => scrollTo('sessao-6')} className="px-2 py-1 text-slate-700 dark:text-neutral-300 whitespace-nowrap">6. Agradecimento</button>
+          <button onClick={() => scrollTo('capa')} className={`px-2 py-1 rounded whitespace-nowrap ${activeSection === 'capa' ? 'font-bold text-[#F2C811]' : 'text-slate-700 dark:text-neutral-300'}`}>Capa</button>
+          <button onClick={() => scrollTo('sessao-1')} className={`px-2 py-1 rounded whitespace-nowrap ${activeSection === 'sessao-1' ? 'font-bold text-[#F2C811]' : 'text-slate-700 dark:text-neutral-300'}`}>1. O que é</button>
+          <button onClick={() => scrollTo('sessao-2')} className={`px-2 py-1 rounded whitespace-nowrap ${activeSection === 'sessao-2' ? 'font-bold text-[#F2C811]' : 'text-slate-700 dark:text-neutral-300'}`}>2. Planilha vs KPI</button>
+          <button onClick={() => scrollTo('sessao-3')} className={`px-2 py-1 rounded whitespace-nowrap ${activeSection === 'sessao-3' ? 'font-bold text-[#F2C811]' : 'text-slate-700 dark:text-neutral-300'}`}>3. Banco SQL</button>
+          <button onClick={() => scrollTo('sessao-4')} className={`px-2 py-1 rounded whitespace-nowrap ${activeSection === 'sessao-4' ? 'font-bold text-[#F2C811]' : 'text-slate-700 dark:text-neutral-300'}`}>4. Decisão</button>
+          <button onClick={() => scrollTo('sessao-5')} className={`px-2 py-1 rounded whitespace-nowrap ${activeSection === 'sessao-5' ? 'font-bold text-[#F2C811]' : 'text-slate-700 dark:text-neutral-300'}`}>5. Q&A</button>
+          <button onClick={() => scrollTo('sessao-6')} className={`px-2 py-1 rounded whitespace-nowrap ${activeSection === 'sessao-6' ? 'font-bold text-[#F2C811]' : 'text-slate-700 dark:text-neutral-300'}`}>6. Agradecimento</button>
         </div>
       </header>
 
@@ -431,125 +433,157 @@ DIVIDE(
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 space-y-28">
 
         {/* ======================================================
-            SESSÃO 1: APRESENTAÇÃO INSTITUCIONAL & O QUE É O POWER BI
+            CAPA DE ABERTURA: APRESENTAÇÃO INSTITUCIONAL
             ====================================================== */}
-        <section id="sessao-1" className="min-h-[80vh] flex flex-col justify-center relative pt-2">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#F2C811]/15 dark:bg-[#F2C811]/5 rounded-full blur-3xl pointer-events-none" />
+        <section id="capa" className="min-h-[85vh] flex flex-col justify-center relative pt-4 pb-12 border-b border-slate-200 dark:border-[#242731]">
+          {/* Efeitos de Iluminação de Fundo */}
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-[#F2C811]/15 dark:bg-[#F2C811]/10 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute top-1/3 right-10 w-80 h-80 bg-sky-500/10 rounded-full blur-[100px] pointer-events-none" />
 
-          {/* CARD INSTITUCIONAL DE ABERTURA: LOGO CIMENTAL + DEPARTAMENTO TI + RESPONSÁVEIS */}
-          <div className="relative z-10 bg-white dark:bg-[#15171F] border border-slate-200 dark:border-[#2B2E36] rounded-2xl p-6 sm:p-7 shadow-sm mb-10">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-100 dark:border-[#242731]">
-              
-              {/* Logo Cimental FERMAFLEX + Identificação do Setor */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                <div className="bg-white p-3 rounded-xl border border-slate-200 dark:border-neutral-700 shadow-xs flex items-center justify-center shrink-0 w-fit">
-                  <img
-                    src="/assets/aistudio/Rectangle_1fb498c1.png"
-                    alt="Cimental Fermaflex"
-                    className="h-10 sm:h-12 object-contain"
-                  />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-extrabold uppercase tracking-widest text-amber-700 dark:text-[#F2C811] bg-amber-500/10 px-2.5 py-0.5 rounded">
-                      Departamento de TI · Setor de Inteligência de Dados
-                    </span>
-                  </div>
-                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mt-1">
-                    Cimental Fermaflex · Capacitação & Apresentação Institucional
-                  </h2>
-                  <p className="text-xs text-slate-600 dark:text-neutral-400">
-                    Cultura Orientada a Dados: Da extração de sistemas operacionais à tomada de decisão ágil
-                  </p>
-                </div>
+          <div className="relative z-10 max-w-5xl mx-auto w-full text-center space-y-8">
+            
+            {/* Logos em Destaque: Cimental FERMAFLEX & Power BI */}
+            <div className="flex items-center justify-center gap-4 sm:gap-6 flex-wrap">
+              <div className="bg-white px-5 py-2.5 rounded-2xl border border-slate-200 dark:border-neutral-700 shadow-md flex items-center h-16 sm:h-20 transition-transform hover:scale-105">
+                <img
+                  src="/assets/aistudio/Rectangle_1fb498c1.png"
+                  alt="Cimental Fermaflex"
+                  className="h-10 sm:h-12 object-contain"
+                />
               </div>
 
-              {/* Cards dos Responsáveis */}
-              <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
-                {/* Diego - Assistente de Power BI */}
-                <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-[#1A1D27] border border-slate-200 dark:border-[#2B2F3D] shadow-xs">
-                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#F2C811] shadow-xs shrink-0 bg-slate-200 dark:bg-neutral-800">
-                    <img
-                      src="/assets/aistudio/WhatsApp_Image_2026-05-22_at_15.38.17_7b9d065d.jpeg"
-                      alt="Diego"
-                      className="w-full h-full object-cover object-top"
-                    />
+              <span className="text-slate-300 dark:text-neutral-600 text-2xl font-light">×</span>
+
+              <div className="bg-white dark:bg-[#181A22] px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-neutral-700 shadow-md flex items-center gap-3 h-16 sm:h-20 transition-transform hover:scale-105">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#F2C811] flex items-center justify-center shadow-md shadow-[#F2C811]/40 shrink-0">
+                  <BarChart3 className="w-6 h-6 text-neutral-950 stroke-[2.5]" />
+                </div>
+                <div className="text-left">
+                  <div className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white leading-tight">
+                    Microsoft
                   </div>
-                  <div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
-                      Diego
-                    </div>
-                    <div className="text-[11px] font-semibold text-amber-700 dark:text-[#F2C811] leading-tight">
-                      Assistente de Power BI
-                    </div>
-                    <div className="text-[10px] text-slate-500 dark:text-neutral-400">
-                      Setor: Inteligência de Dados
-                    </div>
+                  <div className="text-sm sm:text-base font-extrabold text-amber-600 dark:text-[#F2C811] leading-tight">
+                    Power BI
                   </div>
                 </div>
-
-                {/* Alan Sales - Gestor */}
-                <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-[#1A1D27] border border-slate-200 dark:border-[#2B2F3D] shadow-xs">
-                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-slate-300 dark:border-neutral-600 shadow-xs shrink-0 bg-white">
-                    <img
-                      src="/assets/aistudio/alan_sales_clean.png"
-                      alt="Alan Sales"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
-                      Alan Sales
-                    </div>
-                    <div className="text-[11px] font-semibold text-slate-800 dark:text-neutral-200 leading-tight">
-                      Gestor
-                    </div>
-                    <div className="text-[10px] text-slate-500 dark:text-neutral-400">
-                      Departamento: TI
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Rota Lógica da Apresentação */}
-            <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-              <span className="font-semibold text-slate-500 dark:text-neutral-400 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#F2C811]" />
-                Ordem lógica e estruturada da apresentação:
-              </span>
-              <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-neutral-300">
-                <span className="bg-amber-500/15 text-amber-800 dark:text-[#F2C811] font-bold px-2 py-0.5 rounded">1. O que é o Power BI</span>
-                <span>➔</span>
-                <span className="px-1.5 py-0.5">2. De Planilha a KPI</span>
-                <span>➔</span>
-                <span className="px-1.5 py-0.5">3. Extração SQL / ERP</span>
-                <span>➔</span>
-                <span className="px-1.5 py-0.5">4. Decisão em Ação</span>
-                <span>➔</span>
-                <span className="px-1.5 py-0.5">5. Q&A</span>
-                <span>➔</span>
-                <span className="px-1.5 py-0.5">6. Agradecimento</span>
               </div>
             </div>
-          </div>
 
-          {/* APRESENTAÇÃO: O QUE É O POWER BI E COMO ELE FUNCIONA */}
-          <div className="relative z-10 max-w-5xl space-y-8">
-            <div className="space-y-4">
-              <h1 className="text-3xl sm:text-5xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15]">
-                O que é o Power BI e como ele transforma o dia a dia na
-                <span className="block text-[#C99700] dark:text-[#F2C811] mt-1.5">
-                  Cimental Fermaflex?
+            {/* Kicker Institucional */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-[#181A24] border border-slate-200 dark:border-[#2C3040] text-xs font-bold text-amber-700 dark:text-[#F2C811] uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Departamento de TI · Setor de Inteligência de Dados</span>
+            </div>
+
+            {/* Título Principal de Impacto */}
+            <div className="space-y-4 max-w-4xl mx-auto">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.12]">
+                Transformação Digital & Inteligência de Dados com
+                <span className="block text-[#C99700] dark:text-[#F2C811] mt-2">
+                  Power BI
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-700 dark:text-neutral-300 leading-relaxed max-w-4xl">
-                O <strong>Power BI</strong> é a plataforma corporativa de Business Intelligence (BI) da Microsoft que funciona como a <strong>ponte tecnológica</strong> da Cimental Fermaflex: ele se conecta diretamente aos nossos bancos de dados e sistemas operacionais, eliminando o retrabalho de planilhas manuais e transformando dados brutos em <strong>painéis visuais interativos que apoiam decisões rápidas e assertivas</strong>.
+              <p className="text-base sm:text-xl text-slate-600 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed font-normal">
+                Apresentação e Capacitação: Da extração automática dos sistemas operacionais à tomada de decisão ágil na <strong>Cimental Fermaflex</strong>.
               </p>
             </div>
 
+            {/* Cards dos Responsáveis com Fotos Reais */}
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-2">
+              {/* Diego */}
+              <div className="flex items-center gap-3.5 p-3 sm:px-5 sm:py-3 rounded-2xl bg-white dark:bg-[#161822] border border-slate-200 dark:border-[#2B2F3D] shadow-sm text-left">
+                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#F2C811] shadow-xs shrink-0 bg-slate-100 dark:bg-neutral-800">
+                  <img
+                    src="/assets/aistudio/WhatsApp_Image_2026-05-22_at_15.38.17_7b9d065d.jpeg"
+                    alt="Diego"
+                    className="w-full h-full object-cover object-top"
+                  />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
+                    Diego
+                  </div>
+                  <div className="text-xs font-semibold text-amber-700 dark:text-[#F2C811] leading-tight">
+                    Assistente de Power BI
+                  </div>
+                  <div className="text-[10px] text-slate-500 dark:text-neutral-400">
+                    Setor: Inteligência de Dados
+                  </div>
+                </div>
+              </div>
+
+              {/* Alan Sales */}
+              <div className="flex items-center gap-3.5 p-3 sm:px-5 sm:py-3 rounded-2xl bg-white dark:bg-[#161822] border border-slate-200 dark:border-[#2B2F3D] shadow-sm text-left">
+                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-300 dark:border-neutral-600 shadow-xs shrink-0 bg-white">
+                  <img
+                    src="/assets/aistudio/alan_sales_clean.png"
+                    alt="Alan Sales"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
+                    Alan Sales
+                  </div>
+                  <div className="text-xs font-semibold text-slate-800 dark:text-neutral-200 leading-tight">
+                    Gestor
+                  </div>
+                  <div className="text-[10px] text-slate-500 dark:text-neutral-400">
+                    Departamento: TI
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Pauta Rápida / Roteiro da Apresentação */}
+            <div className="max-w-3xl mx-auto pt-2">
+              <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-[#12141C] border border-slate-200 dark:border-[#242731]">
+                <div className="text-xs font-bold text-slate-500 dark:text-neutral-400 mb-2 uppercase tracking-wider">
+                  Roteiro da Apresentação:
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-slate-700 dark:text-neutral-300 font-medium text-left">
+                  <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#F2C811]" /> 1. O que é o Power BI</div>
+                  <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> 2. De Planilha a KPI</div>
+                  <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-sky-500" /> 3. Extração SQL / ERP</div>
+                  <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-purple-500" /> 4. Decisão em Ação</div>
+                  <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> 5. Dúvidas Frequentes</div>
+                  <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-rose-500" /> 6. Encerramento</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Botão de Iniciar Apresentação */}
+            <div className="pt-4 flex items-center justify-center gap-4">
+              <button
+                onClick={() => scrollTo('sessao-1')}
+                className="flex items-center gap-3 px-8 py-4 bg-[#F2C811] hover:bg-[#FFDC33] text-neutral-950 font-extrabold text-base rounded-xl shadow-lg shadow-[#F2C811]/25 hover:shadow-xl transition-all active:scale-95 cursor-pointer group"
+              >
+                <span>Iniciar Apresentação</span>
+                <ArrowRight className="w-5 h-5 stroke-[2.5] group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ======================================================
+            SESSÃO 1: O QUE É O POWER BI E COMO FUNCIONA
+            ====================================================== */}
+        <section id="sessao-1" className="pt-6 space-y-8">
+          <div className="border-b border-slate-200 dark:border-[#242731] pb-5">
+            <div className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-[#F2C811] mb-1">
+              Sessão 01 · Fundamentos da Plataforma
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              O que é o Power BI e como ele transforma o dia a dia na Cimental Fermaflex?
+            </h2>
+            <p className="text-sm sm:text-base text-slate-600 dark:text-neutral-400 mt-1 max-w-4xl">
+              O <strong>Power BI</strong> é a plataforma corporativa de Business Intelligence (BI) da Microsoft que funciona como a <strong>ponte tecnológica</strong> da Cimental Fermaflex: ele se conecta diretamente aos nossos bancos de dados e sistemas operacionais, eliminando o retrabalho de planilhas manuais e transformando dados brutos em <strong>painéis visuais interativos que apoiam decisões rápidas e assertivas</strong>.
+            </p>
+          </div>
+
+          <div className="relative z-10 max-w-5xl space-y-8">
             {/* 3 BENEFÍCIOS TANGÍVEIS PARA A CIMENTAL */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white dark:bg-[#181A22] border border-slate-200 dark:border-[#2B2E36] rounded-xl p-5 shadow-sm space-y-2">
