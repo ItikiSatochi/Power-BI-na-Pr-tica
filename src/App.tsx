@@ -468,8 +468,12 @@ DIVIDE(
               <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
                 {/* Diego - Assistente de Power BI */}
                 <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-[#1A1D27] border border-slate-200 dark:border-[#2B2F3D] shadow-xs">
-                  <div className="w-9 h-9 rounded-full bg-[#F2C811] text-neutral-950 flex items-center justify-center font-extrabold text-sm shadow-xs shrink-0">
-                    D
+                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#F2C811] shadow-xs shrink-0 bg-slate-200 dark:bg-neutral-800">
+                    <img
+                      src="/assets/aistudio/WhatsApp_Image_2026-05-22_at_15.38.17_7b9d065d.jpeg"
+                      alt="Diego"
+                      className="w-full h-full object-cover object-top"
+                    />
                   </div>
                   <div>
                     <div className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
@@ -484,14 +488,18 @@ DIVIDE(
                   </div>
                 </div>
 
-                {/* Alan - Gestor */}
+                {/* Alan Sales - Gestor */}
                 <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-[#1A1D27] border border-slate-200 dark:border-[#2B2F3D] shadow-xs">
-                  <div className="w-9 h-9 rounded-full bg-slate-800 dark:bg-neutral-700 text-white flex items-center justify-center font-extrabold text-sm shadow-xs shrink-0">
-                    A
+                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-slate-300 dark:border-neutral-600 shadow-xs shrink-0 bg-white">
+                    <img
+                      src="/assets/aistudio/alan_sales_clean.png"
+                      alt="Alan Sales"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div>
                     <div className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
-                      Alan
+                      Alan Sales
                     </div>
                     <div className="text-[11px] font-semibold text-slate-800 dark:text-neutral-200 leading-tight">
                       Gestor
@@ -1739,8 +1747,12 @@ DIVIDE(
                 
                 {/* Diego */}
                 <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#1A1D27] border border-slate-200 dark:border-[#2B2F3D] flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#F2C811] text-neutral-950 font-extrabold text-base flex items-center justify-center shrink-0 shadow-xs">
-                    D
+                  <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-[#F2C811] shadow-xs shrink-0 bg-slate-200 dark:bg-neutral-800">
+                    <img
+                      src="/assets/aistudio/WhatsApp_Image_2026-05-22_at_15.38.17_7b9d065d.jpeg"
+                      alt="Diego"
+                      className="w-full h-full object-cover object-top"
+                    />
                   </div>
                   <div className="space-y-1">
                     <h5 className="text-sm font-bold text-slate-900 dark:text-white">Diego</h5>
@@ -1756,13 +1768,17 @@ DIVIDE(
                   </div>
                 </div>
 
-                {/* Alan */}
+                {/* Alan Sales */}
                 <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#1A1D27] border border-slate-200 dark:border-[#2B2F3D] flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-slate-800 dark:bg-neutral-700 text-white font-extrabold text-base flex items-center justify-center shrink-0 shadow-xs">
-                    A
+                  <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-slate-300 dark:border-neutral-600 shadow-xs shrink-0 bg-white">
+                    <img
+                      src="/assets/aistudio/alan_sales_clean.png"
+                      alt="Alan Sales"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div className="space-y-1">
-                    <h5 className="text-sm font-bold text-slate-900 dark:text-white">Alan</h5>
+                    <h5 className="text-sm font-bold text-slate-900 dark:text-white">Alan Sales</h5>
                     <div className="text-xs font-semibold text-slate-800 dark:text-neutral-200">
                       Gestor
                     </div>
@@ -1877,7 +1893,7 @@ DIVIDE(
             </div>
             <span aria-hidden="true">·</span>
             <div>
-              <strong className="text-slate-800 dark:text-neutral-200">Responsável Departamento:</strong> Alan (Gestor)
+              <strong className="text-slate-800 dark:text-neutral-200">Responsável Departamento:</strong> Alan Sales (Gestor)
             </div>
           </div>
         </div>
