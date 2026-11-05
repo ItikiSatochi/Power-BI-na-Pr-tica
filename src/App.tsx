@@ -52,7 +52,9 @@ import {
   HeartHandshake,
   Building2,
   UserCheck,
-  Check
+  Check,
+  X,
+  ExternalLink
 } from 'lucide-react';
 
 // Registra módulos do Chart.js
@@ -92,6 +94,31 @@ export default function App() {
     'conexoes': false,
     'seguranca': false,
   });
+
+  // Estado do Modal de Transformação do Excel em Gráficos (Sessão 2)
+  const [isExcelModalOpen, setIsExcelModalOpen] = useState<boolean>(false);
+  const [excelModalBranch, setExcelModalBranch] = useState<'todas' | 'SP' | 'MG' | 'PR' | 'PE'>('todas');
+  const [excelModalChannel, setExcelModalChannel] = useState<'todos' | 'B2B' | 'VAREJO' | 'DISTRIB'>('todos');
+  const [isModalProcessing, setIsModalProcessing] = useState<boolean>(false);
+
+  const openExcelModal = () => {
+    setIsModalProcessing(true);
+    setIsExcelModalOpen(true);
+    setTimeout(() => {
+      setIsModalProcessing(false);
+    }, 450);
+  };
+
+  // Fecha o modal ao pressionar ESC
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isExcelModalOpen) {
+        setIsExcelModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isExcelModalOpen]);
 
   // Atualiza classe .dark no HTML
   useEffect(() => {
@@ -307,6 +334,89 @@ DIVIDE(
       ],
     };
   }, [filterMultiplier, isDark]);
+
+  // Dados Dinâmicos para o Pop-up de Transformação do Excel (Sessão 2)
+  const excelModalData = useMemo(() => {
+    const branchList = [
+      { id: 'SP', name: 'SP Matriz', actual: 4280, target: 3900, b2b: 2910, varejo: 920, distrib: 450 },
+      { id: 'MG', name: 'MG Belo Horizonte', actual: 2150, target: 2050, b2b: 1420, varejo: 480, distrib: 250 },
+      { id: 'PR', name: 'PR Curitiba', actual: 1450, target: 1500, b2b: 820, varejo: 390, distrib: 240 },
+      { id: 'PE', name: 'PE Recife', actual: 1060, target: 950, b2b: 570, varejo: 190, distrib: 300 },
+    ];
+
+    const filtered = excelModalBranch === 'todas'
+      ? branchList
+      : branchList.filter((b) => b.id === excelModalBranch);
+
+    const labels = filtered.map((b) => b.name);
+
+    const actuals = filtered.map((b) => {
+      if (excelModalChannel === 'B2B') return b.b2b;
+      if (excelModalChannel === 'VAREJO') return b.varejo;
+      if (excelModalChannel === 'DISTRIB') return b.distrib;
+      return b.actual;
+    });
+
+    const targets = filtered.map((b) => {
+      if (excelModalChannel === 'B2B') return Math.round(b.target * 0.64);
+      if (excelModalChannel === 'VAREJO') return Math.round(b.target * 0.22);
+      if (excelModalChannel === 'DISTRIB') return Math.round(b.target * 0.14);
+      return b.target;
+    });
+
+    const totalActual = actuals.reduce((a, b) => a + b, 0);
+    const totalTarget = targets.reduce((a, b) => a + b, 0);
+    const diffVal = totalActual - totalTarget;
+    const diffPct = totalTarget > 0 ? (((totalActual - totalTarget) / totalTarget) * 100).toFixed(1) : '0.0';
+
+    const sumB2B = filtered.reduce((acc, b) => acc + b.b2b, 0);
+    const sumVarejo = filtered.reduce((acc, b) => acc + b.varejo, 0);
+    const sumDistrib = filtered.reduce((acc, b) => acc + b.distrib, 0);
+
+    const barData = {
+      labels,
+      datasets: [
+        {
+          label: 'Faturamento Realizado (R$ mil)',
+          data: actuals,
+          backgroundColor: isDark ? '#F2C811' : '#EAB308',
+          borderRadius: 6,
+          hoverBackgroundColor: '#FFDC33',
+        },
+        {
+          label: 'Meta Orçada (Budget)',
+          data: targets,
+          backgroundColor: isDark ? '#334155' : '#CBD5E1',
+          borderRadius: 6,
+          hoverBackgroundColor: isDark ? '#475569' : '#94A3B8',
+        },
+      ],
+    };
+
+    const donutData = {
+      labels: ['B2B Corporativo', 'Varejo', 'Distribuição'],
+      datasets: [
+        {
+          data: [sumB2B, sumVarejo, sumDistrib],
+          backgroundColor: ['#F2C811', '#3B82F6', '#10B981'],
+          borderWidth: 2,
+          borderColor: isDark ? '#14161E' : '#FFFFFF',
+          hoverOffset: 6,
+        },
+      ],
+    };
+
+    return {
+      barData,
+      donutData,
+      totalActual,
+      totalTarget,
+      diffVal,
+      diffPct,
+      isAbove: diffVal >= 0,
+      totalLines: '52.418',
+    };
+  }, [excelModalBranch, excelModalChannel, isDark]);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0D0E11] text-slate-900 dark:text-neutral-100 font-sans antialiased transition-colors duration-200">
@@ -710,14 +820,24 @@ DIVIDE(
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             
-            {/* LADO ESQUERDO: O "ANTES" (Simulação de Planilha do Excel Crua) */}
-            <div className="lg:col-span-5 bg-white dark:bg-[#16171E] border border-slate-300 dark:border-[#2B2E36] rounded-xl overflow-hidden shadow-sm">
-              <div className="bg-[#107C41] px-4 py-2 flex items-center justify-between text-white text-xs font-medium">
+            {/* LADO ESQUERDO: O "ANTES" (Simulação de Planilha do Excel Crua - Clicável para abrir Pop-up) */}
+            <div
+              onClick={openExcelModal}
+              className="lg:col-span-5 bg-white dark:bg-[#16171E] border-2 border-slate-300 dark:border-[#2B2E36] hover:border-amber-400 dark:hover:border-[#F2C811] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group relative"
+              title="Clique para abrir a transformação em gráficos dinâmicos"
+            >
+              <div className="bg-[#107C41] px-4 py-2.5 flex items-center justify-between text-white text-xs font-medium">
                 <div className="flex items-center gap-2">
-                  <FileSpreadsheet className="w-4 h-4" />
-                  <span>Fechamento_Faturamento_Final_v14_corrigido.xlsx</span>
+                  <FileSpreadsheet className="w-4 h-4 shrink-0" />
+                  <span className="truncate max-w-[210px] sm:max-w-none">Fechamento_Faturamento_Final_v14_corrigido.xlsx</span>
                 </div>
-                <span className="bg-emerald-900/60 text-[10px] px-2 py-0.5 rounded font-mono">52.418 linhas</span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="bg-emerald-900/60 text-[10px] px-2 py-0.5 rounded font-mono">52.418 linhas</span>
+                  <span className="inline-flex items-center gap-1 bg-[#F2C811] group-hover:bg-[#FFDC33] text-neutral-950 font-extrabold text-[10px] px-2.5 py-1 rounded-md shadow-sm transition-transform group-hover:scale-105 active:scale-95">
+                    <Sparkles className="w-3 h-3 text-neutral-950" />
+                    <span>Ver Gráficos</span>
+                  </span>
+                </div>
               </div>
 
               <div className="p-3 bg-rose-50 dark:bg-rose-950/20 border-b border-rose-200 dark:border-rose-900/40 text-rose-800 dark:text-rose-400 text-xs font-bold flex items-center justify-between">
@@ -736,31 +856,31 @@ DIVIDE(
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200 dark:divide-[#242731] text-slate-700 dark:text-neutral-300">
-                    <tr>
+                    <tr className="group-hover:bg-amber-500/5 transition-colors">
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">#84920</td>
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">SP_MATRIZ</td>
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">B2B_ENT</td>
                       <td className="p-2 text-right font-semibold">R$ 142.500</td>
                     </tr>
-                    <tr>
+                    <tr className="group-hover:bg-amber-500/5 transition-colors">
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">#84921</td>
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">PR_CURITIBA</td>
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">VAREJO</td>
                       <td className="p-2 text-right font-semibold">R$ 18.200</td>
                     </tr>
-                    <tr>
+                    <tr className="group-hover:bg-amber-500/5 transition-colors">
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">#84922</td>
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">MG_BH</td>
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">B2B_ENT</td>
                       <td className="p-2 text-right font-semibold">R$ 89.400</td>
                     </tr>
-                    <tr>
+                    <tr className="group-hover:bg-amber-500/5 transition-colors">
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">#84923</td>
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">PE_RECIFE</td>
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">DISTRIB</td>
                       <td className="p-2 text-right font-semibold">R$ 34.100</td>
                     </tr>
-                    <tr>
+                    <tr className="group-hover:bg-amber-500/5 transition-colors">
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">#84924</td>
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">SP_MATRIZ</td>
                       <td className="p-2 border-r border-slate-200 dark:border-[#2B2E36]">B2B_ENT</td>
@@ -770,9 +890,22 @@ DIVIDE(
                 </table>
               </div>
 
+              {/* Alertas da Planilha */}
               <div className="p-3 bg-slate-100 dark:bg-[#121318] border-t border-slate-200 dark:border-[#242731] text-[11px] text-slate-500 dark:text-neutral-400 space-y-1">
                 <div>⚠️ Fórmulas PROCV lentas e propensas a erro humano</div>
                 <div>⚠️ Dificuldade de auditar se os descontos foram autorizados</div>
+              </div>
+
+              {/* Botão de Ação / Rodapé do Card Interativo */}
+              <div className="p-3 bg-amber-50 dark:bg-[#1E1B13] border-t border-amber-200 dark:border-amber-900/40 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900 dark:text-[#F2C811]">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-[#F2C811]" />
+                  <span>Clique para abrir Pop-up</span>
+                </div>
+                <div className="inline-flex items-center gap-1 text-xs font-extrabold text-neutral-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-[#F2C811] transition-colors">
+                  <span>Transformar em Gráficos</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
               </div>
             </div>
 
@@ -1934,6 +2067,341 @@ DIVIDE(
           </div>
         </div>
       </footer>
+
+      {/* ========================================================
+          POP-UP MODAL: TRANSFORMAÇÃO DINÂMICA DO EXCEL EM GRÁFICOS
+          ======================================================== */}
+      {isExcelModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsExcelModalOpen(false);
+          }}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="relative w-full max-w-5xl bg-white dark:bg-[#12141C] border-2 border-amber-400 dark:border-[#F2C811] rounded-2xl shadow-2xl overflow-hidden my-auto flex flex-col max-h-[92vh]">
+            
+            {/* CABEÇALHO DO POP-UP */}
+            <div className="px-5 py-4 sm:px-7 sm:py-5 bg-slate-50 dark:bg-[#181A24] border-b border-slate-200 dark:border-[#282B38] flex items-start justify-between gap-4 shrink-0">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-[11px] font-extrabold text-amber-800 dark:text-[#F2C811] uppercase tracking-wider">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Transformação em Tempo Real · De Planilha para Gráficos Power BI</span>
+                </div>
+                <h3 className="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">
+                  Fechamento de Faturamento: Da Tabela para Decisões Visuais
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-neutral-400">
+                  <span className="font-mono text-emerald-700 dark:text-emerald-400 font-bold">52.418 linhas</span> da planilha <span className="font-mono bg-slate-200 dark:bg-[#20222E] px-1.5 py-0.5 rounded text-[11px]">Fechamento_Faturamento_Final_v14_corrigido.xlsx</span> processadas em <strong>0,28s</strong>.
+                </p>
+              </div>
+
+              {/* Botão de Fechar */}
+              <button
+                onClick={() => setIsExcelModalOpen(false)}
+                className="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-[#252836] transition-colors cursor-pointer shrink-0"
+                title="Fechar (Pressione ESC)"
+              >
+                <X className="w-5 h-5 stroke-[2.5]" />
+              </button>
+            </div>
+
+            {/* CORPO DO POP-UP (SCROLLÁVEL) */}
+            <div className="p-5 sm:p-7 overflow-y-auto space-y-6">
+
+              {/* BARRA DO PIPELINE ETL DO POWER BI */}
+              <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-[#171922] border border-slate-200 dark:border-[#282B38] flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold text-slate-800 dark:text-neutral-200 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    Etapas do Power Query:
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-white dark:bg-[#20222D] border border-slate-200 dark:border-[#2B2E36] font-mono text-[11px]">
+                    1. Carga do Excel (.xlsx)
+                  </span>
+                  <span className="text-amber-500 font-bold">➔</span>
+                  <span className="px-2 py-0.5 rounded bg-white dark:bg-[#20222D] border border-slate-200 dark:border-[#2B2E36] font-mono text-[11px]">
+                    2. Tratamento & Tipagem Moeda
+                  </span>
+                  <span className="text-amber-500 font-bold">➔</span>
+                  <span className="px-2 py-0.5 rounded bg-white dark:bg-[#20222D] border border-slate-200 dark:border-[#2B2E36] font-mono text-[11px] text-amber-700 dark:text-[#F2C811] font-bold">
+                    3. DAX: Real vs Meta & Margem
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setIsModalProcessing(true);
+                    setTimeout(() => setIsModalProcessing(false), 450);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-800 dark:text-[#F2C811] font-bold text-[11px] transition-colors cursor-pointer shrink-0"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isModalProcessing ? 'animate-spin' : ''}`} />
+                  <span>Simular Recálculo Instantâneo</span>
+                </button>
+              </div>
+
+              {/* SEGMENTADORES / FILTROS DINÂMICOS NO POP-UP */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 bg-slate-50 dark:bg-[#161822] border border-slate-200 dark:border-[#272A36] rounded-xl">
+                {/* Filtro por Filial */}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-xs font-bold text-slate-700 dark:text-neutral-300 flex items-center gap-1 mr-1">
+                    <Filter className="w-3.5 h-3.5 text-amber-600 dark:text-[#F2C811]" />
+                    Filial:
+                  </span>
+                  {[
+                    { id: 'todas', label: 'Todas' },
+                    { id: 'SP', label: 'SP Matriz' },
+                    { id: 'MG', label: 'MG BH' },
+                    { id: 'PR', label: 'PR Curitiba' },
+                    { id: 'PE', label: 'PE Recife' },
+                  ].map((f) => (
+                    <button
+                      key={f.id}
+                      onClick={() => setExcelModalBranch(f.id as any)}
+                      className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                        excelModalBranch === f.id
+                          ? 'bg-[#F2C811] text-neutral-950 font-bold shadow-xs'
+                          : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-[#1F222E] border border-slate-200 dark:border-[#2B2E38]'
+                      }`}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Filtro por Canal */}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-xs font-bold text-slate-700 dark:text-neutral-300 mr-1">
+                    Canal:
+                  </span>
+                  {[
+                    { id: 'todos', label: 'Todos' },
+                    { id: 'B2B', label: 'B2B Corporativo' },
+                    { id: 'VAREJO', label: 'Varejo' },
+                    { id: 'DISTRIB', label: 'Distribuição' },
+                  ].map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => setExcelModalChannel(c.id as any)}
+                      className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                        excelModalChannel === c.id
+                          ? 'bg-[#F2C811] text-neutral-950 font-bold shadow-xs'
+                          : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-[#1F222E] border border-slate-200 dark:border-[#2B2E38]'
+                      }`}
+                    >
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4 CARDS DE KPIS GERADOS DA PLANILHA */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="bg-slate-50 dark:bg-[#161822] border border-slate-200 dark:border-[#2B2E36] rounded-xl p-3.5">
+                  <span className="text-xs text-slate-500 dark:text-neutral-400 block">Faturamento Realizado</span>
+                  <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 dark:text-white tabular-nums mt-0.5">
+                    R$ {(excelModalData.totalActual / 1000).toFixed(2)}M
+                  </div>
+                  <span className="text-[10px] text-slate-500 dark:text-neutral-400 font-mono">
+                    R$ {excelModalData.totalActual.toLocaleString('pt-BR')} mil
+                  </span>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-[#161822] border border-slate-200 dark:border-[#2B2E36] rounded-xl p-3.5">
+                  <span className="text-xs text-slate-500 dark:text-neutral-400 block">Meta Orçada (Budget)</span>
+                  <div className="text-xl sm:text-2xl font-bold font-mono text-slate-900 dark:text-white tabular-nums mt-0.5">
+                    R$ {(excelModalData.totalTarget / 1000).toFixed(2)}M
+                  </div>
+                  <span className="text-[10px] text-slate-500 dark:text-neutral-400 font-mono">
+                    Meta de vendas consolidada
+                  </span>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-[#161822] border border-slate-200 dark:border-[#2B2E36] rounded-xl p-3.5">
+                  <span className="text-xs text-slate-500 dark:text-neutral-400 block">Desempenho vs Meta</span>
+                  <div className={`text-xl sm:text-2xl font-bold font-mono tabular-nums mt-0.5 ${
+                    excelModalData.isAbove ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                  }`}>
+                    {excelModalData.isAbove ? '+' : ''}{excelModalData.diffPct}%
+                  </div>
+                  <span className={`text-[10px] font-semibold flex items-center gap-1 ${
+                    excelModalData.isAbove ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                  }`}>
+                    {excelModalData.isAbove ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                    {excelModalData.isAbove ? 'Acima da meta' : 'Abaixo da meta'}
+                  </span>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-[#161822] border border-slate-200 dark:border-[#2B2E36] rounded-xl p-3.5">
+                  <span className="text-xs text-slate-500 dark:text-neutral-400 block">Velocidade de Consulta</span>
+                  <div className="text-xl sm:text-2xl font-bold font-mono text-amber-700 dark:text-[#F2C811] tabular-nums mt-0.5">
+                    0,28 seg
+                  </div>
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                    Antes: 3h a 5h manuais
+                  </span>
+                </div>
+              </div>
+
+              {/* OS 2 GRÁFICOS INTERATIVOS DO POP-UP */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                {/* GRÁFICO 1: Barras - Realizado vs Meta por Filial */}
+                <div className="lg:col-span-7 bg-slate-50 dark:bg-[#161822] border border-slate-200 dark:border-[#282B38] rounded-xl p-4 sm:p-5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#F2C811]" />
+                        Faturamento Realizado vs Meta (Budget) por Filial
+                      </h4>
+                      <span className="text-[11px] font-mono text-slate-500 dark:text-neutral-400">R$ mil</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-neutral-400 mb-3">
+                      Passe o mouse nas barras para comparar o número realizado contra o orçamento.
+                    </p>
+                  </div>
+
+                  <div className="h-56 sm:h-64 w-full">
+                    <Bar
+                      data={excelModalData.barData}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: {
+                            position: 'top' as const,
+                            align: 'end' as const,
+                            labels: {
+                              boxWidth: 10,
+                              color: chartTheme.textColor,
+                              font: { size: 10 },
+                            },
+                          },
+                          tooltip: {
+                            backgroundColor: chartTheme.tooltipBg,
+                            borderColor: chartTheme.tooltipBorder,
+                            borderWidth: 1,
+                            padding: 8,
+                            titleColor: chartTheme.tooltipTitle,
+                            bodyColor: chartTheme.tooltipBody,
+                            callbacks: {
+                              label: (ctx) => ` ${ctx.dataset.label}: R$ ${(ctx.parsed.y ?? 0).toLocaleString('pt-BR')} mil`,
+                            },
+                          },
+                        },
+                        scales: {
+                          x: {
+                            grid: { color: chartTheme.subtleGridColor },
+                            ticks: { color: chartTheme.textColor, font: { size: 11 } },
+                          },
+                          y: {
+                            grid: { color: chartTheme.gridColor },
+                            ticks: {
+                              color: chartTheme.textColor,
+                              font: { size: 10 },
+                              callback: (val) => `R$ ${val}`,
+                            },
+                          },
+                        },
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* GRÁFICO 2: Rosca - Distribuição por Canal */}
+                <div className="lg:col-span-5 bg-slate-50 dark:bg-[#161822] border border-slate-200 dark:border-[#282B38] rounded-xl p-4 sm:p-5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                        Mix de Vendas por Canal
+                      </h4>
+                      <span className="text-[11px] font-mono text-amber-700 dark:text-[#F2C811] font-semibold">Canal</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-neutral-400 mb-3">
+                      Composição da receita bruta faturada.
+                    </p>
+                  </div>
+
+                  <div className="h-56 sm:h-64 w-full flex items-center justify-center">
+                    <Doughnut
+                      data={excelModalData.donutData}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                          legend: {
+                            position: 'bottom' as const,
+                            labels: {
+                              boxWidth: 10,
+                              color: chartTheme.textColor,
+                              font: { size: 10 },
+                              padding: 10,
+                            },
+                          },
+                          tooltip: {
+                            backgroundColor: chartTheme.tooltipBg,
+                            borderColor: chartTheme.tooltipBorder,
+                            borderWidth: 1,
+                            padding: 8,
+                            titleColor: chartTheme.tooltipTitle,
+                            bodyColor: chartTheme.tooltipBody,
+                            callbacks: {
+                              label: (ctx) => ` R$ ${(ctx.parsed as number).toLocaleString('pt-BR')} mil`,
+                            },
+                          },
+                        },
+                        cutout: '68%',
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* CARD DE DECISÃO DE NEGÓCIO */}
+              <div className="bg-amber-50/90 dark:bg-[#1E1B13] border border-amber-300 dark:border-amber-900/60 rounded-xl p-4 space-y-1.5">
+                <div className="flex items-center gap-2 text-xs font-bold text-amber-900 dark:text-[#F2C811]">
+                  <Briefcase className="w-4 h-4" />
+                  <span>Tomada de Decisão Executiva Viabilizada pelo Gráfico:</span>
+                </div>
+                <p className="text-xs text-slate-800 dark:text-neutral-200 leading-relaxed">
+                  Enquanto na planilha estática o gestor demorava horas somando células e correndo risco de erro em fórmulas PROCV, o gráfico do Power BI revela instantaneamente que o canal <strong>B2B Grandes Contas</strong> puxou o superávit de SP (+9,7%), ao mesmo tempo em que aponta o desvio em Curitiba (-3,3%). A gestão pode direcionar ações comerciais e remanejar lotes de entrega no mesmo instante.
+                </p>
+              </div>
+
+            </div>
+
+            {/* RODAPÉ DO POP-UP */}
+            <div className="px-5 py-3.5 sm:px-7 bg-slate-100 dark:bg-[#151720] border-t border-slate-200 dark:border-[#282B38] flex flex-wrap items-center justify-between gap-3 shrink-0">
+              <span className="text-xs text-slate-500 dark:text-neutral-400">
+                Pressione <kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-[#20222E] border border-slate-300 dark:border-[#2B2E36] font-mono text-[10px]">ESC</kbd> para fechar
+              </span>
+
+              <div className="flex items-center gap-2.5">
+                <button
+                  onClick={() => setIsExcelModalOpen(false)}
+                  className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-700 dark:text-neutral-300 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-[#1E202B] border border-slate-300 dark:border-[#2D3040] hover:bg-slate-50 dark:hover:bg-[#252836] transition-colors cursor-pointer"
+                >
+                  Fechar Janela
+                </button>
+
+                <button
+                  onClick={() => {
+                    setIsExcelModalOpen(false);
+                    scrollTo('sessao-3');
+                  }}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-neutral-950 bg-[#F2C811] hover:bg-[#FFDC33] transition-all shadow-sm active:scale-95 cursor-pointer"
+                >
+                  <span>Continuar: 3. Banco SQL</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
