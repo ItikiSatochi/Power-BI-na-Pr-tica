@@ -320,40 +320,42 @@ DIVIDE(
           {/* Marca / Logo Empresa Cimental Fermaflex + Power BI */}
           <button
             onClick={() => scrollTo('capa')}
-            className="flex items-center gap-2 sm:gap-3 focus:outline-none group text-left cursor-pointer"
+            className="flex items-center gap-2.5 shrink-0 focus:outline-none group text-left cursor-pointer select-none"
+            title="Ir para o início (Capa)"
           >
             {/* Logo Cimental FERMAFLEX */}
-            <div className="bg-white px-2 py-1 rounded-md border border-slate-200 dark:border-neutral-700 shadow-xs flex items-center h-8">
+            <div className="bg-white px-2 py-1 rounded-md border border-slate-200 dark:border-neutral-700 shadow-xs flex items-center h-8 shrink-0">
               <img
                 src="/assets/aistudio/Rectangle_1fb498c1.png"
                 alt="Cimental Fermaflex"
-                className="h-5 sm:h-5.5 object-contain"
+                className="h-5 w-auto object-contain"
               />
             </div>
 
-            <div className="h-4 w-[1px] bg-slate-300 dark:bg-neutral-700 hidden sm:block" />
+            <div className="h-4 w-[1px] bg-slate-300 dark:bg-neutral-700 shrink-0" />
 
             {/* Ícone Power BI */}
             <div className="w-8 h-8 rounded-md bg-[#F2C811] flex items-center justify-center shadow-sm shadow-[#F2C811]/30 shrink-0">
               <BarChart3 className="w-4.5 h-4.5 text-neutral-950 stroke-[2.5]" />
             </div>
 
-            <div className="flex flex-col">
-              <span className="text-xs sm:text-sm font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-[#F2C811] transition-colors leading-tight">
-                Power BI <span className="font-light text-slate-500 dark:text-neutral-400 hidden lg:inline">| Cimental Fermaflex</span>
+            {/* Identificação Textual sem quebra nem sobreposição */}
+            <div className="flex flex-col justify-center shrink-0">
+              <span className="text-xs sm:text-sm font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-[#F2C811] transition-colors leading-tight whitespace-nowrap">
+                Power BI
               </span>
-              <span className="text-[10px] text-amber-700 dark:text-[#F2C811] font-semibold leading-tight hidden md:inline">
+              <span className="text-[10px] text-amber-700 dark:text-[#F2C811] font-semibold leading-tight whitespace-nowrap hidden sm:inline">
                 TI · Inteligência de Dados
               </span>
             </div>
           </button>
 
           {/* 7 Itens de Navegação Rápida com Rolagem Suave */}
-          <nav className="hidden xl:flex items-center gap-1">
+          <nav className="hidden xl:flex items-center gap-1 shrink-0">
             {[
               { id: 'capa', label: 'Capa' },
               { id: 'sessao-1', label: '1. O que é' },
-              { id: 'sessao-2', label: '2. De Planilha a KPI' },
+              { id: 'sessao-2', label: '2. Planilha vs KPI' },
               { id: 'sessao-3', label: '3. Extração SQL' },
               { id: 'sessao-4', label: '4. Decisão em Ação' },
               { id: 'sessao-5', label: '5. Dúvidas Frequentes' },
@@ -364,7 +366,7 @@ DIVIDE(
                 <button
                   key={item.id}
                   onClick={() => scrollTo(item.id)}
-                  className={`px-2.5 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                  className={`px-2.5 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap shrink-0 cursor-pointer ${
                     isActive
                       ? 'text-amber-800 dark:text-[#F2C811] bg-amber-500/15 font-bold shadow-xs'
                       : 'text-slate-600 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-neutral-800/60'
@@ -377,10 +379,10 @@ DIVIDE(
           </nav>
 
           {/* Ações: Alternar Tema Claro/Escuro & Modo Projetor */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={toggleTheme}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md border text-slate-700 dark:text-neutral-300 bg-slate-100 dark:bg-[#181A22] border-slate-300 dark:border-[#2B2E36] hover:bg-slate-200 dark:hover:bg-[#22242E] transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md border text-slate-700 dark:text-neutral-300 bg-slate-100 dark:bg-[#181A22] border-slate-300 dark:border-[#2B2E36] hover:bg-slate-200 dark:hover:bg-[#22242E] transition-all active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
               title={isDark ? 'Alternar para Tema Claro' : 'Alternar para Tema Escuro'}
             >
               {isDark ? (
@@ -406,7 +408,7 @@ DIVIDE(
                   setPresentationMode(false);
                 }
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md text-neutral-950 bg-[#F2C811] hover:bg-[#FFDC33] transition-all shadow-sm active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md text-neutral-950 bg-[#F2C811] hover:bg-[#FFDC33] transition-all shadow-sm active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
               title="Ativar modo tela cheia para projetar"
             >
               {presentationMode ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
