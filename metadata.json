@@ -1,0 +1,6 @@
+{
+  "name": "Power BI Executive Guide & Hub",
+  "description": "Guia interativo corporativo de capacitação em Power BI para gestores e líderes com Q&A prático de negócios, dashboards executivos dinâmicos e simulador de ROI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
